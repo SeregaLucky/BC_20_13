@@ -1,5 +1,5 @@
 import { fetchGetInfo, fetchPostInfo, fetchPatchInfo } from './api.js';
-import { template } from './template.js';
+import { templateItemUser } from './templateItemUser.js';
 
 const form = document.querySelector('.js_form');
 const list = document.querySelector('.js_list');
@@ -10,7 +10,7 @@ const getInfoUsers = async () => {
     const { data } = await fetchGetInfo();
 
     const allLi = data
-      .map(item => template(item.id, item.name, item.selery))
+      .map(item => templateItemUser(item.id, item.name, item.selery))
       .join('');
     list.insertAdjacentHTML('beforeend', allLi);
   } catch (err) {
@@ -37,7 +37,7 @@ function postData(e) {
   fetchPostInfo(obj)
     .then(res => {
       console.log('res', res);
-      const li = template(res.data.id, res.data.name, res.data.selery);
+      const li = templateItemUser(res.data.id, res.data.name, res.data.selery);
 
       list.insertAdjacentHTML('beforeend', li);
     })

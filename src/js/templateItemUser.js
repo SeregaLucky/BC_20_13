@@ -1,4 +1,4 @@
-export const template = (id, name, selery) => {
+export const templateItemUser = (id, name, selery) => {
   return `
   <li data-userId="${id}">
     <h3 data-info="name">${name}</h3>
