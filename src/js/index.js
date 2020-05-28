@@ -1,4 +1,4 @@
-import { fetchPostInfo, fetchGetInfo } from './api.js';
+import { fetchGetInfo, fetchPostInfo, fetchPatchInfo } from './api.js';
 import { template } from './template.js';
 
 const form = document.querySelector('.js_form');
@@ -48,38 +48,75 @@ function inputChange({ target }) {
   const { nodeName } = target;
 
   if (nodeName === 'H3') {
-    target.classList.add('li--disable');
-    const liParent = target.closest('li');
-
-    const { userid: userId } = liParent;
-    const { info } = target.dataset;
-
-    const input = liParent.querySelector('input');
-    const button = liParent.querySelector('button');
-
-    input.classList.add('li--active');
-    button.classList.add('li--active');
-
-    input.name = info;
-
+    findElement(target);
     return;
   }
 
   if (nodeName === 'P') {
-    // target.classList.add('li--disable');
-    const liParent = target.closest('li');
-
-    const { userid: userId } = liParent;
-    const { info } = target.dataset;
-
-    const input = liParent.querySelector('input');
-    const button = liParent.querySelector('button');
-
-    input.classList.add('li--active');
-    button.classList.add('li--active');
-
-    input.name = info;
-
+    findElement(target);
     return;
   }
+}
+
+function findElement(target) {
+  target.classList.add('li--disable');
+  const liParent = target.closest('li');
+
+  // Находим инпут и кнопку
+  const inputChange = liParent.querySelector('.js_li_input');
+  const buttonChange = liParent.querySelector('.js_li_button');
+
+  // Записываем в инпут то что в параграфе
+  inputChange.value = target.textContent;
+
+  // Вешаем на кнопку слушателя который будет отрабатывать при клике
+  buttonChange.addEventListener('click', changeUser);
+
+  const { info } = target.dataset;
+
+  // Делаем инпут и кнопку видимыми
+  inputChange.classList.add('li--active');
+  buttonChange.classList.add('li--active');
+
+  inputChange.name = info;
+}
+
+function changeUser(e) {
+  const liParent = e.target.closest('li');
+
+  // Поиск инпута и кнопки
+  const inputChange = liParent.querySelector('.js_li_input');
+  const buttonChange = liParent.querySelector('.js_li_button');
+
+  // Достаем с инпута необходимые данные
+  const inputChangeValue = inputChange.value;
+  const name = inputChange.name;
+
+  // Находим заголовок имени и параграф с зп
+  const h3 = liParent.querySelector('h3');
+  const parag = liParent.querySelector('p');
+
+  // Удаляем css класс который прячит елемент
+  h3.classList.remove('li--disable');
+  parag.classList.remove('li--disable');
+
+  // находим и снимаем слушателя с кнопки
+  buttonChange.removeEventListener('click', changeUser);
+
+  // Скрываем кнопку и инпут
+  inputChange.classList.remove('li--active');
+  buttonChange.classList.remove('li--active');
+
+  const { userid } = e.currentTarget.dataset;
+
+  const newInfoObj = { [name]: inputChangeValue };
+
+  fetchPatchInfo(newInfoObj, userid)
+    .then(({ data }) => {
+      console.log(data);
+
+      h3.textContent = data.name;
+      parag.textContent = data.selery;
+    })
+    .catch(() => null);
 }
