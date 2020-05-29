@@ -18,6 +18,8 @@ export const fetchPostInfo = objUser => axios.post('/users', objUser);
 export const fetchPatchInfo = (objUser, idUser) =>
   axios.patch(`/users/${idUser}`, objUser);
 
+export const fetchDeleteUser = id => axios.delete(`/users/${id}`);
+
 // export const fetchPostInfo = function (objUser) {
 //   const options = {
 //     method: 'POST',

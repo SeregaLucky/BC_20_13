@@ -1,4 +1,9 @@
-import { fetchGetInfo, fetchPostInfo, fetchPatchInfo } from './api.js';
+import {
+  fetchGetInfo,
+  fetchPostInfo,
+  fetchPatchInfo,
+  fetchDeleteUser,
+} from './api.js';
 import { templateItemUser } from './templateItemUser.js';
 
 const form = document.querySelector('.js_form');
@@ -21,6 +26,7 @@ getInfoUsers();
 
 form.addEventListener('submit', postData);
 list.addEventListener('dblclick', inputChange);
+list.addEventListener('click', handleDeleteUser);
 
 // Создаем и отправзяем нового юзера при сабмите
 function postData(e) {
@@ -56,6 +62,11 @@ function inputChange({ target }) {
     findElement(target);
     return;
   }
+
+  // if (nodeName === 'BUTTON') {
+  //   deleteUser(target);
+  //   return;
+  // }
 }
 
 function findElement(target) {
@@ -118,5 +129,17 @@ function changeUser(e) {
       h3.textContent = data.name;
       parag.textContent = data.selery;
     })
+    .catch(() => null);
+}
+
+function handleDeleteUser({ target }) {
+  // if (target.nodeName !== 'BUTTON') return;
+
+  const { userid, action } = target.dataset;
+
+  if (action !== 'delete') return;
+
+  fetchDeleteUser(userid)
+    .then(() => target.closest('li').remove())
     .catch(() => null);
 }
